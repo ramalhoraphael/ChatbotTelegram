@@ -2,7 +2,7 @@
   "name": "meu-bot-telegram",
   "version": "1.0.0",
   "description": "Bot Telegram usando node-telegram-bot-api",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
