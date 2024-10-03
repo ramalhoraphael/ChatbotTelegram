@@ -36,6 +36,9 @@ bot.on("message", (msg) => {
   }
 });
 
+//
+
+
 // Funções para logar erros
 bot.on("polling_error", (error) => console.log("Polling Error:", error));
 bot.on("webhook_error", (error) => console.log("Webhook Error:", error));

@@ -33,9 +33,6 @@ class Conversacao {
   }
 
 
-
-
-
   // Método de cadastramento
   async cadastrarCliente() {
       await this.solicitarNome();          // Inicia solicitando o nome
@@ -49,78 +46,116 @@ class Conversacao {
       //await this.confirmarCadastro();      // Finaliza confirmando o cadastro
   }
 
-    // Coleta e define o nome
-    async solicitarNome() {
-        await this.bot.sendMessage(this.chatId, "Por favor, digite seu nome.");
-        this.bot.once('message', async (msg) => {
-            this.cliente.setNome(msg.text); // Utiliza o setter
-            await this.solicitarEmail();
-        });
+  // Coleta e define o nome
+  async solicitarNome() {
+      await this.bot.sendMessage(this.chatId, "Por favor, digite seu nome.");
+      this.bot.once('message', async (msg) => {
+          this.cliente.nome = msg.text; // Utiliza o setter (sem parênteses)
+          await this.solicitarEmail();
+      });
+  }
+/*
+  // Coleta e define o e-mail
+  async solicitarEmail() {
+      await this.bot.sendMessage(this.chatId, "Por favor, digite seu e-mail.");
+      this.bot.once('message', async (msg) => {
+          const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+          if (emailRegex.test(msg)) {
+            this.cliente.email = msg.text;
+          } else {
+              console.log("E-mail inválido. Por favor, insira um e-mail válido.");
+              await this.bot.sendMessage(this.chatId, "E-mail inválido. Por favor, insira um e-mail válido.");
+              await this.solicitarEmail();
+            }
+          await this.solicitarSindico();
+      });
+  }
+*/// Coleta e define o e-mail com validação contínua
+  async solicitarEmail() {
+    let emailValido = false;
+
+    // Loop enquanto o e-mail não for válido
+    while (!emailValido) {
+      await this.bot.sendMessage(this.chatId, "Por favor, digite seu e-mail.");
+
+      // Aguardando a resposta do usuário
+      const resposta = await new Promise(resolve => {
+        this.bot.once('message', resolve);
+      });
+
+      // Verifica se o e-mail está em um formato válido
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      if (emailRegex.test(resposta.text)) {
+        this.cliente.email = resposta.text; // Utiliza o setter para armazenar o e-mail
+        emailValido = true; // E-mail válido, sair do loop
+      } else {
+        // Envia uma mensagem de erro e repete a solicitação
+        console.log("E-mail inválido. Por favor, insira um e-mail válido.");
+        await this.bot.sendMessage(this.chatId, "E-mail inválido. Por favor, insira um e-mail válido.");
+      }
     }
 
-    // Coleta e define o e-mail
-    async solicitarEmail() {
-        await this.bot.sendMessage(this.chatId, "Por favor, digite seu e-mail.");
-        this.bot.once('message', async (msg) => {
-            this.cliente.setEmail(msg.text); // Utiliza o setter
-            await this.solicitarSindico();
-        });
-    }
+    // Após a validação, chama a próxima etapa do cadastro
+    await this.solicitarSindico();
+  }
 
-    // Coleta e define se é síndico
-    async solicitarSindico() {
-        await this.bot.sendMessage(this.chatId, "Você é síndico? Digite sim ou não.");
-        this.bot.once('message', async (msg) => {
-            const sindico = msg.text.toLowerCase() === 'sim';
-            this.cliente.setSindico(sindico); // Utiliza o setter
-            await this.solicitarQuantidadeApartamentos();
-        });
-    }
+  
+  
+  // Coleta e define se é síndico
+  async solicitarSindico() {
+      await this.bot.sendMessage(this.chatId, "Você é síndico? Digite sim ou não.");
+      this.bot.once('message', async (msg) => {
+          const sindico = msg.text.toLowerCase() === 'sim';
+          this.cliente.sindico = sindico; // Utiliza o setter (sem parênteses)
+          await this.solicitarQuantidadeApartamentos();
+      });
+  }
 
-    // Coleta e define a quantidade de apartamentos
-    async solicitarQuantidadeApartamentos() {
-        await this.bot.sendMessage(this.chatId, "Quantos apartamentos existem no condomínio?");
-        this.bot.once('message', async (msg) => {
-            this.cliente.setQtdApartamentos(parseInt(msg.text)); // Utiliza o setter
-            await this.solicitarTelefone();
-        });
-    }
+  // Coleta e define a quantidade de apartamentos
+  async solicitarQuantidadeApartamentos() {
+      await this.bot.sendMessage(this.chatId, "Quantos apartamentos existem no condomínio?");
+      this.bot.once('message', async (msg) => {
+          this.cliente.qtdApartamentos = parseInt(msg.text); // Utiliza o setter (sem parênteses)
+          await this.solicitarTelefone();
+      });
+  }
 
-    // Coleta e define o telefone
-    async solicitarTelefone() {
-        await this.bot.sendMessage(this.chatId, "Por favor, digite seu número de telefone.");
-        this.bot.once('message', async (msg) => {
-            this.cliente.setTelefone(msg.text); // Utiliza o setter
-            await this.solicitarCEP();
-        });
-    }
+  // Coleta e define o telefone
+  async solicitarTelefone() {
+      await this.bot.sendMessage(this.chatId, "Por favor, digite seu número de telefone.");
+      this.bot.once('message', async (msg) => {
+          this.cliente.telefone = msg.text; // Utiliza o setter (sem parênteses)
+          await this.solicitarCEP();
+      });
+  }
 
-    // Coleta e define o CEP
-    async solicitarCEP() {
-        await this.bot.sendMessage(this.chatId, "Por favor, digite seu CEP.");
-        this.bot.once('message', async (msg) => {
-            this.cliente.setEndereco(msg.text); // Utiliza o setter para definir o endereço
-            await this.solicitarNumeroApartamento();
-        });
-    }
+  // Coleta e define o CEP
+  async solicitarCEP() {
+      await this.bot.sendMessage(this.chatId, "Por favor, digite seu CEP.");
+      this.bot.once('message', async (msg) => {
+          this.cliente.endereco = msg.text; // Utiliza o setter (sem parênteses)
+          await this.solicitarNumeroApartamento();
+      });
+  }
 
-    // Coleta e define o número do apartamento
-    async solicitarNumeroApartamento() {
-        await this.bot.sendMessage(this.chatId, "Qual o número do seu apartamento?");
-        this.bot.once('message', async (msg) => {
-            this.cliente.setApartamento(msg.text); // Utiliza o setter
-            await this.solicitarBlocoApartamento();
-        });
-    }
+  // Coleta e define o número do apartamento
+  async solicitarNumeroApartamento() {
+      await this.bot.sendMessage(this.chatId, "Qual o número do seu apartamento?");
+      this.bot.once('message', async (msg) => {
+          this.cliente.apartamento = msg.text; // Utiliza o setter (sem parênteses)
+          await this.solicitarBlocoApartamento();
+      });
+  }
 
-    // Coleta e define o bloco do apartamento
-    async solicitarBlocoApartamento() {
-        await this.bot.sendMessage(this.chatId, "Qual o bloco do seu apartamento?");
-        this.bot.once('message', async (msg) => {
-            this.cliente.setBloco(msg.text); // Utiliza o setter
-            await this.confirmarCadastro();
-        });
-    }
+  // Coleta e define o bloco do apartamento
+  async solicitarBlocoApartamento() {
+      await this.bot.sendMessage(this.chatId, "Qual o bloco do seu apartamento?");
+      this.bot.once('message', async (msg) => {
+          this.cliente.bloco = msg.text; // Utiliza o setter (sem parênteses)
+          await this.confirmarCadastro();
+      });
+  }
+ 
 
     // Confirmação final dos dados
     async confirmarCadastro() {

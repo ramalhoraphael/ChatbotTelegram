@@ -29,12 +29,11 @@ class Cliente {
   }
 
   set email(valor) {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    if (emailRegex.test(valor)) {
+    //const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    //if (emailRegex.test(valor)) {
       this._email = valor;
-    } else {
-      console.log("E-mail inválido. Por favor, insira um e-mail válido.");
-    }
+    //} else {
+    //  console.log("E-mail inválido. Por favor, insira um e-mail válido.");
   }
 
   // Getter e Setter para telefone
