@@ -1,65 +1,44 @@
-// Importando o módulo dotenv
+// Importando o módulo dotenv e TelegramBot
 require("dotenv").config();
-
-// Importando o módulo da API do Telegram
 const TelegramBot = require("node-telegram-bot-api");
 
-// Token do bot
-const token = process.env.TELEGRAM_TOKEN; // Usar a variável de ambiente
+// Importando a classe de conversação
+const Conversacao = require("./Conversacao");
 
 // Configurando o bot
-const bot = new TelegramBot(token, {
+const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, {
   polling: {
-    interval: 1000, // Intervalo entre verificações de novas mensagens
-    timeout: 10, // Timeout da requisição para API do Telegram
-    retries: 3, // Tentativas de reconexão em caso de erro
-    params: {
-      timeout: 10, // Timeout da requisição em segundos
-    },
+    interval: 1000,
+    timeout: 10,
+    retries: 3,
+    params: { timeout: 10 },
   },
 });
 
-// Função para lidar com o comando /start
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  const name = msg.from.first_name;
+// Armazenar as conversações ativas
+const conversacoesAtivas = {};
 
-  // Envia uma mensagem de boas-vindas
-  bot.sendMessage(chatId, `Olá, ${name}! O bot está funcionando!`);
-});
-
-// Função para lidar com o comando /help
-bot.onText(/\/help/, (msg) => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(
-    chatId,
-    "Aqui estão os comandos disponíveis:\n/start - Começar o bot\n/help - Ver ajuda",
-  );
-});
-
-// Função para responder a qualquer mensagem (exceto os comandos específicos)
+// Responde a qualquer mensagem e inicia ou continua a conversação
 bot.on("message", (msg) => {
   const chatId = msg.chat.id;
 
-  // Verifica se a mensagem não é um comando (não contém "/")
-  if (!msg.text.startsWith("/")) {
-    bot.sendMessage(chatId, `Você escreveu: ${msg.text}`);
+  // Verifica se já existe uma conversação ativa para o chatId
+  if (!conversacoesAtivas[chatId]) {
+    // Cria uma nova instância de conversação e armazena
+    const conversacao = new Conversacao(bot, chatId);
+    conversacoesAtivas[chatId] = conversacao;
+
+    // Inicia a conversação sem passar msg
+    conversacao.iniciarConversa();
+  } else {
+    // Caso já exista uma conversação ativa, delega o tratamento para a conversação
+    /*conversacoesAtivas[chatId].tratarRespostaUsuario(msg);*/
   }
 });
 
-// Função para logar erros de polling e webhook
-bot.on("polling_error", (error) => {
-  console.log("Polling Error:", error); // Log de erro de polling
-});
+// Funções para logar erros
+bot.on("polling_error", (error) => console.log("Polling Error:", error));
+bot.on("webhook_error", (error) => console.log("Webhook Error:", error));
+bot.on("error", (error) => console.log("Erro Geral:", error));
 
-bot.on("webhook_error", (error) => {
-  console.log("Webhook Error:", error); // Log de erro de webhook
-});
-
-// Lidar com erros de timeout de conexão com a API
-bot.on("error", (error) => {
-  console.log("Erro Geral:", error); // Logar erros gerais
-});
-
-// Logar quando o bot iniciar corretamente
-console.log("Bot iniciado, aguardando comandos...");
+console.log("Bot iniciado e aguardando mensagens...");
