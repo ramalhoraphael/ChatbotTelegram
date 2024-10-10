@@ -95,4 +95,20 @@ class AlterarCadastro {
                 await this.bot.sendMessage(this.chatId, "Digite o novo bloco.");
                 this.bot.once('message', async (msg) => {
                     this.cliente.bloco = msg.text;
-                    await this.bot.sendMessage(this.chatId, "Bloco
+                    await this.bot.sendMessage(this.chatId, "Bloco alterado com sucesso.");
+                    await this.mostrarInformacoes();
+                });
+                break;
+            case "9":
+                await this.bot.sendMessage(this.chatId, "Voltando ao menu anterior...");
+                // Aqui você pode chamar a função do menu principal, dependendo de como ele foi implementado.
+                break;
+            default:
+                await this.bot.sendMessage(this.chatId, "Opção inválida. Tente novamente.");
+                await this.mostrarInformacoes();
+                break;
+        }
+    }
+}
+
+module.exports = AlterarCadastro;
