@@ -16,7 +16,14 @@ class Conversacao {
 
     async iniciarConversa() {
         await this.bot.sendMessage(this.chatId, "Bem-vindo ao Chat Geral - Cadastro de Condomínios para coleta seletiva");
+        await this.menuOpcoes();
+    }
+
+    async menuOpcoes(){    
         await this.bot.sendMessage(this.chatId, `Escolha uma das opções abaixo:\n\n1. Para se cadastrar\n2. Alterar cadastro\n3. Acessar página web do ChatGeral\n4. Sair`);
+
+         // Remove todos os listeners de 'message' para evitar duplicações
+        this.bot.removeAllListeners('message');
 
         this.bot.once('message', async (msg) => {
             await this.tratarRespostaUsuario(msg.text);

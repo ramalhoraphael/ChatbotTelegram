@@ -3,11 +3,13 @@ class Cliente {
     this._nome = "";
     this._email = "";
     this._telefone = "";
-    this._endereco = "";
+    this._cep = "";  // Alterado de _endereco para _cep
+    this._numeroResidencia = "";  // Novo atributo para número da residência
     this._apartamento = "";
     this._bloco = "";
     this._sindico = false;
     this._qtdApartamentos = 0;
+    this._idCliente = "";  // Novo atributo para ID do cliente
   }
 
   get nome() {
@@ -36,12 +38,20 @@ class Cliente {
     this._telefone = valor;
   }
 
-  get endereco() {
-    return this._endereco;
+  get cep() {
+    return this._cep;
   }
 
-  set endereco(valor) {
-    this._endereco = valor;
+  set cep(valor) {
+    this._cep = valor;
+  }
+
+  get numeroResidencia() {
+    return this._numeroResidencia;
+  }
+
+  set numeroResidencia(valor) {
+    this._numeroResidencia = valor;
   }
 
   get apartamento() {
@@ -76,16 +86,27 @@ class Cliente {
     this._qtdApartamentos = valor;
   }
 
+  // Novo getter e setter para idCliente
+  get idCliente() {
+    return this._idCliente;
+  }
+
+  set idCliente(valor) {
+    this._idCliente = valor;
+  }
+
   toString() {
     return `
       Nome: ${this._nome}
       E-mail: ${this._email}
       Telefone: ${this._telefone}
-      Endereço: ${this._endereco}
+      CEP: ${this._cep}
+      Número da Residência: ${this._numeroResidencia}
       Apartamento: ${this._apartamento}
       Bloco: ${this._bloco}
       Síndico: ${this._sindico ? 'Sim' : 'Não'}
       Quantidade de Apartamentos: ${this._qtdApartamentos}
+      ID do Cliente: ${this._idCliente}
     `;
   }
 }
