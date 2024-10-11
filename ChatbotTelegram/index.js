@@ -15,23 +15,62 @@ const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, {
 // Armazenar as conversações ativas
 const conversacoesAtivas = {};
 
-// funcao node telegram para responder a qualquer mensagem e iniciar ou continuar a conversação
+// Função para encerrar a conversa e deixá-la em stand-by
+function encerrarConversa(chatId) {
+  if (conversacoesAtivas[chatId]) {
+    // Encerra a conversa atual, removendo o chat da lista
+    delete conversacoesAtivas[chatId];
+
+    // Envia mensagem informando que a conversa foi encerrada
+    //bot.sendMessage(chatId, "Conversa encerrada. Você pode iniciar uma nova conversa a qualquer momento.");
+
+    console.log(`Conversa com o chatId ${chatId} encerrada e colocada em stand-by.`);
+
+    // Após encerrar, reiniciar a escuta de novas mensagens para o chat
+    reiniciarConversa(chatId);
+  }
+}
+
+// Função para reiniciar a escuta do bot após encerrar a conversa
+function reiniciarConversa(chatId) {
+  bot.on("message", (msg) => {
+    if (msg.chat.id === chatId) {
+      // Se o usuário enviar outra mensagem, reinicia uma nova conversa
+      if (!conversacoesAtivas[chatId]) {
+        console.log("Reiniciando uma nova conversa após o encerramento...");
+        const conversacao = new Conversacao(bot, chatId, module.exports);
+        conversacoesAtivas[chatId] = conversacao;
+        conversacao.iniciarConversa();
+      }
+    }
+  });
+}
+
+// Função principal que escuta mensagens e gerencia o fluxo da conversa
 bot.on("message", (msg) => {
   const chatId = msg.chat.id;
 
-//verifica se nao ha conversas ativas, e cria uma nova.
-//chama a função de boas vindas
+  // Se não houver conversas ativas, cria uma nova
   if (!conversacoesAtivas[chatId]) {
-    const conversacao = new Conversacao(bot, chatId);
+    console.log("Iniciando uma nova conversa...");
+    const conversacao = new Conversacao(bot, chatId, module.exports);
     conversacoesAtivas[chatId] = conversacao;
     conversacao.iniciarConversa();
-
-//se ja houver houver conversas ativas
-//apenas chama a funcao para o menu de opcoes     
   } else {
-     conversacoesAtivas[chatId].tratarRespostaUsuario(msg.text);
+    console.log("Continuando conversa existente...");
+    conversacoesAtivas[chatId].tratarRespostaUsuario(msg.text);
   }
 });
+
+// Função para encerrar a conversa a partir de outra classe (no seu caso, via menu)
+function encerrarConversaExternamente(chatId) {
+  encerrarConversa(chatId);
+}
+
+// Exporta a função para ser usada em outras classes
+module.exports = {
+  encerrarConversaExternamente,
+};
 
 // Funções para logar erros
 bot.on("polling_error", (error) => console.log("Polling Error:", error));
