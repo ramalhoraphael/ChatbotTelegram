@@ -1,16 +1,17 @@
 class Cliente {
   constructor() {
-    this._cep = "";  // 1. CEP continua
-    this._numeroDoEndereco = "";  // 2. Nº END alterado para numeroDoEndereco
-    this._qtdBlocos = 0;  // 3. QTDE BLOCOS adicionada
-    this._qtdApartamentos = 0;  // 4. QTDE DE APARTAMENTOS continua
-    this._nome = "";  // 5. NOME continua
-    this._email = "";  // 6. EMAIL continua
-    this._sindico = false;  // 7. SINDICO continua
-    this._telefone = "";  // 8. TELEFONE continua
-    this._bloco = "";  // 9. BLOCO continua
-    this._apartamento = "";  // 10. APARTAMENTO continua
-    this._idCliente = "";  // ID do Cliente mantido
+    this._cep = null;  // 1. CEP continua
+    this._numeroDoEndereco = null;  // 2. Nº END alterado para numeroDoEndereco
+    this._qtdBlocos = null;  // 3. QTDE BLOCOS adicionada
+    this._qtdApartamentos = null;  // 4. QTDE DE APARTAMENTOS continua
+    this._nome = null;  // 5. NOME continua
+    this._email = null;  // 6. EMAIL continua
+    this._sindico = null;  // 7. SINDICO continua
+    this._telefone = null;  // 8. TELEFONE continua
+    this._bloco = null;  // 9. BLOCO continua
+    this._apartamento = null;  // 10. APARTAMENTO continua
+    this._idCliente = null;  // ID do Cliente mantido
+    this._qtdColetas = null;
   }
 
   // Getters e setters na nova ordem
@@ -104,9 +105,16 @@ class Cliente {
     this._idCliente = valor;
   }
 
+  get qtdColetas() {
+    return this._qtdColetas;
+  }
+
+  set qtdColetas(valor) {
+    this._qtdColetas = valor;
+  }
+
   toString() {
-    return `
-      CEP: ${this._cep}
+    return `CEP: ${this._cep}
       Nº do Endereço: ${this._numeroDoEndereco}
       Quantidade de Blocos: ${this._qtdBlocos}
       Quantidade de Apartamentos: ${this._qtdApartamentos}
@@ -117,6 +125,8 @@ class Cliente {
       Bloco: ${this._bloco}
       Apartamento: ${this._apartamento}
       ID do Cliente: ${this._idCliente}
+      Quantidade de Coletas: ${this._qtdColetas}
+
     `;
   }
 }
